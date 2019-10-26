@@ -12,17 +12,17 @@ REPEATER_CALL="WB4BXO"
 # this time plus 4 minutes and 59 seconds.
 INACTIVITY_TIME="3600"
 
-##### Only test/disconnect if not linked for a net by netLink.sh
-# This means you must explicitely unlink after a net using netLink.sh
-# which sets and clears this flag.
-if [ ! -f /tmp/netLink.flag ]; then
-  ######################################################################
-  # Get the Links.log to see if and when we connected to the reflector.
-  # One reason is so we won't disconnect if not connected, another reason
-  # is to see if we connected via the control channel instead of RF and 
-  # use that time instead.
-  LINKS_LOG=$(cat /var/log/pi-star/Links.log)
-  if [ ${#LINKS_LOG} != 0 ]; then
+######################################################################
+# Get the Links.log to see if and when we connected to the reflector.
+# One reason is so we won't disconnect if not connected, another reason
+# is to see if we connected via the control channel instead of RF and 
+# use that time instead.
+LINKS_LOG=$(cat /var/log/pi-star/Links.log)
+if [ ${#LINKS_LOG} != 0 ]; then
+  ##### Only test/disconnect if not linked for a net by netLink.sh
+  # This means you must explicitely unlink after a net using netLink.sh
+  # which sets and clears this flag.
+  if [ ! -f /tmp/netLink.flag ]; then
     ######################################################################
     #get last RF DStar header (same as last transmit to repeater) 
     LAST_RF=$(grep "Repeater header" /var/log/pi-star/Headers.log | tail -n 1)
@@ -73,8 +73,16 @@ if [ ! -f /tmp/netLink.flag ]; then
       fi
     fi
   else
-    echo "Not currently linked!"
+    echo "Flagged as a Net link, don't disconnect on inactivity!"
   fi
 else
-  echo "Flagged as a Net link, don't disconnect on inactivity!"
+  echo "Not currently linked!"
+  if [ -f /tmp/netLink.flag ]; then
+    # Clear the flag just in case it got stuck. This can happen if you
+    # use the control channel via the pi-star dashboard or ircdbbremote app
+    # to disconnect. It can also happen if the link is made without the fixed
+    # option and someone drops the link via RF.
+    echo "Clearing the netLink.flag!!"
+    rm -f /tmp/netLink.flag
+  fi
 fi
