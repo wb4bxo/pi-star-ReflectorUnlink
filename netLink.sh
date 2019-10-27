@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "$(date)-netLink.sh $1 $2" >>/var/log/pi-star/netLink.log
+echo "$(date -u)-netLink.sh $1 $2" >>/var/log/pi-star/netLink.log
 if [ "$1" == "unlink" ]; then
   rm -f /tmp/netLink.flag
 else

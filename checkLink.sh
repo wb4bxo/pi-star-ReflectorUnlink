@@ -34,7 +34,7 @@ if [ ${#LINKS_LOG} != 0 ]; then
     echo [$TIME_STAMP]
     TIME_T_THEN=$(date -u -d "${TIME_STAMP}" +"%s")
     echo [$TIME_T_THEN]
-    TIME_T_NOW=$(date +"%s")
+    TIME_T_NOW=$(date -u +"%s")
     echo [$TIME_T_NOW]
     TIME_T_DELTA=$(($TIME_T_NOW-$TIME_T_THEN))
     TIME_CONNECT=${LINKS_LOG%: *Type:*}
@@ -69,7 +69,7 @@ if [ ${#LINKS_LOG} != 0 ]; then
       if (($TIME_T_DELTA>$INACTIVITY_TIME)); then
         # gateway call and it was longer ago than INACTIVITY_TIME
         /usr/local/sbin/pistar-link unlink
-        echo "$(date)- Inactivity unlink" >>/var/log/pi-star/netLink.log
+        echo "$(date -u)- Inactivity unlink" >>/var/log/pi-star/netLink.log
       fi
     fi
   else
