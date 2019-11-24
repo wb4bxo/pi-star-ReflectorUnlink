@@ -64,12 +64,15 @@ if [ ${#LINKS_LOG} != 0 ]; then
     RPT2_CALL=${RPT2_CALL% Flags:*}
     echo [$RPT2_CALL]
 
+    REFLECTOR=$(echo ${LINKS_LOG#*Refl: })
+    REFLECTOR=$(echo ${REFLECTOR% Dir:*})
+
     # check and see if it is a call routed through the gateway
     if [ "$RPT2_CALL" == "${REPEATER_CALL} G" ] || $USING_LINK_TIME; then
       if (($TIME_T_DELTA>$INACTIVITY_TIME)); then
         # gateway call and it was longer ago than INACTIVITY_TIME
         /usr/local/sbin/pistar-link unlink
-        echo "$(date -u)- Inactivity unlink" >>/var/log/pi-star/netLink.log
+        echo "$(date -u)- Inactivity unlink from ${REFLECTOR}" >>/var/log/pi-star/netLink.log
       fi
     fi
   else
