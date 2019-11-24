@@ -20,7 +20,7 @@ INACTIVITY_TIME="3600"
 LINKS_LOG=$(cat /var/log/pi-star/Links.log)
 if [ ${#LINKS_LOG} != 0 ]; then
   ##### Only test/disconnect if not linked for a net by netLink.sh
-  # This means you must explicitely unlink after a net using netLink.sh
+  # This means you must explicitly unlink after a net using netLink.sh
   # which sets and clears this flag.
   if [ ! -f /tmp/netLink.flag ]; then
     ######################################################################
