@@ -72,7 +72,7 @@ if [ ${#LINKS_LOG} != 0 ]; then
       if (($TIME_T_DELTA>$INACTIVITY_TIME)); then
         # gateway call and it was longer ago than INACTIVITY_TIME
         /usr/local/sbin/pistar-link unlink
-        echo "$(date -u)- Inactivity unlink from ${REFLECTOR}" >>/var/log/pi-star/netLink.log
+        echo "$(date -u)-Inactivity unlink from ${REFLECTOR}" >>/var/log/pi-star/netLink.log
       fi
     fi
   else
@@ -85,7 +85,7 @@ else
     # use the control channel via the pi-star dashboard or ircdbbremote app
     # to disconnect. It can also happen if the link is made without the fixed
     # option and someone drops the link via RF.
-    echo "Clearing the netLink.flag!!"
+    echo "$(date -u)-Clearing the netLink.flag!!" >>/var/log/pi-star/netLink.log
     rm -f /tmp/netLink.flag
   fi
 fi
