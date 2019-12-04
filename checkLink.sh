@@ -12,6 +12,10 @@ REPEATER_CALL="WB4BXO"
 # this time plus 4 minutes and 59 seconds.
 INACTIVITY_TIME="3600"
 
+# get current epock time for calculations
+TIME_T_NOW=$(date -u +"%s")
+echo "TIME_T_NOW: [$TIME_T_NOW]"
+
 ######################################################################
 # Get the Links.log to see if and when we connected to the reflector.
 # One reason is so we won't disconnect if not connected, another reason
@@ -33,9 +37,7 @@ if [ ${#LINKS_LOG} != 0 ]; then
     TIME_STAMP=${LAST_RF%: Repeater*}
     echo [$TIME_STAMP]
     TIME_T_THEN=$(date -u -d "${TIME_STAMP}" +"%s")
-    echo [$TIME_T_THEN]
-    TIME_T_NOW=$(date -u +"%s")
-    echo [$TIME_T_NOW]
+    echo "TIME_T_THEN: [$TIME_T_THEN]"
     TIME_T_DELTA=$(($TIME_T_NOW-$TIME_T_THEN))
     TIME_CONNECT=${LINKS_LOG%: *Type:*}
     TIME_T_LINK=$(date -u -d "${TIME_CONNECT}" +"%s")
@@ -46,7 +48,7 @@ if [ ${#LINKS_LOG} != 0 ]; then
     fi
     #TIME_T_DELTA now has the elapsed time since either last RF or LINK time,
     # whichever is shorter.
-    echo [$TIME_T_DELTA]
+    echo "TIME_T_DELTA: [$TIME_T_DELTA]"
 
     MY_CALL=$(echo ${LAST_RF#*My: })
     MY_CALL=${MY_CALL% Your:*}
@@ -85,7 +87,18 @@ else
     # use the control channel via the pi-star dashboard or ircdbbremote app
     # to disconnect. It can also happen if the link is made without the fixed
     # option and someone drops the link via RF.
-    echo "$(date -u)-Clearing the netLink.flag!!" >>/var/log/pi-star/netLink.log
-    rm -f /tmp/netLink.flag
+    FLAG_TIME=$(stat -c %Y /tmp/netLink.flag)
+    echo "FLAG_TIME: [${FLAG_TIME}]"
+    TIME_T_SINCE_FLAG=$(($TIME_T_NOW-$FLAG_TIME))
+    echo "TIME_T_SINCE_FLAG: [${TIME_T_SINCE_FLAG}]"
+    if (( $TIME_T_SINCE_FLAG>60 )); then
+      # Only clear the flag if it's more than a minute old in case this script
+      # and the netLink script run at the same time due to crontab. This is to
+      # make sure the link has time to happen if it was just initiated
+      echo "$(date -u)-Clearing the netLink.flag that is ${TIME_T_SINCE_FLAG} seconds old!!" >>/var/log/pi-star/netLink.log
+      rm -f /tmp/netLink.flag
+    else
+      echo "$(date -u)-NOT clearing the netLink.flag that is ${TIME_T_SINCE_FLAG} seconds old!!" >>/var/log/pi-star/netLink.log
+    fi
   fi
 fi

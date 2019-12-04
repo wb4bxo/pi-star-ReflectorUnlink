@@ -40,19 +40,14 @@ Here is what I have in my root's crontab:
 */5 * * * * /home/pi-star/bin/checkLink.sh
 
 ## SE DStar weather net
-53 20 * * 0 /home/pi-star/bin/netLink.sh ref004_a fixed
+55 20 * * 0 /home/pi-star/bin/netLink.sh ref004_a fixed
 00 22 * * 0 /home/pi-star/bin/netLink.sh unlink
 
 ## Ham Nation after show net
-43 21 * * 3 /home/pi-star/bin/netLink.sh ref014_c fixed
-59 23 * * 3 /home/pi-star/bin/netLink.sh unlink
+45 21 * * 3 /home/pi-star/bin/netLink.sh ref014_c fixed
+00 00 * * 4 /home/pi-star/bin/netLink.sh unlink
 ```
 
-NOTE - You should make sure your netLink.sh and checkLink.sh do not run at
-the same time via crontab, it will not complete linking before checkLink.sh
-runs and will thus clear the netLink flag. To allow for this, I have changed
-my netLink.sh to not be on the 5 minute intervals that checkLink.sh is run on
-as shown in my crontab list above.
 
 Hope you find this useful.
 Feel free to give feedback, good, bad or suggestions.
