@@ -33,21 +33,44 @@ to unlink the reflector. netLink.sh simply adds the setting and clearing of
 /tmp/netLink.flag that is used by checkLink.sh to determine if this is a
 scheduled link for nets and does not do the disconnect on inactivity if so.
 
+The easiest way to get this on you pi-star system is to log in as root and
+use git to pull the repository to where you want it to reside. I do mine in
+the root user directory (/root). By using git you can come back later as
+needed and pull any updates or even roll back to any previous versions.
+Here is the sequence of commands I use to do this from either an ssh terminal
+session or via the SSH Access option in the Expert Configuration screen. You
+can just copy and paste the entire block and paste it into your ssh session
+(usually using Shift-Insert).
+
+```bash
+sudo -s
+cd
+# at this point run pwd to verify it displays /root
+pwd
+git clone https://github.com/wb4bxo/pi-star-ReflectorUnlink.git
+chmod a+x pi-star-ReflectorUnlink/*.sh
+exit
+```
+
+At this point you are ready to setup your cronjob(s) to run these scripts
+using "sudo crontab -e". Note, if you get an error when you save your cronjobs
+that it is most likely due to the fact that the file system on pi-star is
+usually mounted read-only. To keep from loosing your cronjob you can open
+another ssh session and run rpi-rw, then save again in the crontab editor.
 Here is what I have in my root's crontab:
 
 ```bash
 ## Check for idle reflectors linked
-*/5 * * * * /home/pi-star/bin/checkLink.sh
+*/5 * * * * /root/pi-star-ReflectorUnlink/checkLink.sh
 
 ## SE DStar weather net
-55 20 * * 0 /home/pi-star/bin/netLink.sh ref004_a fixed
-00 22 * * 0 /home/pi-star/bin/netLink.sh unlink
+55 20 * * 0 /root/pi-star-ReflectorUnlink/netLink.sh ref004_a fixed
+00 22 * * 0 /root/pi-star-ReflectorUnlink/netLink.sh unlink
 
 ## Ham Nation after show net
-45 21 * * 3 /home/pi-star/bin/netLink.sh ref014_c fixed
-00 00 * * 4 /home/pi-star/bin/netLink.sh unlink
+45 21 * * 3 /root/pi-star-ReflectorUnlink/netLink.sh ref014_c fixed
+00 00 * * 4 /root/pi-star-ReflectorUnlink/netLink.sh unlink
 ```
-
 
 Hope you find this useful.
 Feel free to give feedback, good, bad or suggestions.
