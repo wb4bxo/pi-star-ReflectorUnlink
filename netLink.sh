@@ -5,6 +5,6 @@ if [ "$1" == "unlink" ]; then
   /usr/local/sbin/pistar-link $1 $2
   rm -f /tmp/netLink.flag
 else
-  touch /tmp/netLink.flag
+  echo "$1 $2">/tmp/netLink.flag
   /usr/local/sbin/pistar-link $1 $2
 fi
